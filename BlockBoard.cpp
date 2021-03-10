@@ -11,18 +11,31 @@ TODO:
 -creating a tool for viewing posts
 */
 
-void p2p() {
+void p2pConnect()
+{
 
 }
 
+void login()
+{
 
-int main() {
+}
+
+void guiLaunch();
+
+
+int main()
+{
   //Order of operations:
 
   //Connect to the P2P
+  p2pConnect();
 
   //Login through provision of your private key so as to sign posts
+  login();
 
   //Make transactions or make a post (a post has the inherent transaction of currency to even make the post)
+  guiLaunch();
+
 
 }
