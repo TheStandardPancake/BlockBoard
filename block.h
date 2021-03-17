@@ -1,4 +1,4 @@
-#include <sha256.h>
+#include <picosha2.h>
 #include <string>
 
 class Block {
@@ -14,23 +14,26 @@ public:
         header[] = {previousHash,timeStamp,nonce,merkleTreeHash};
     }
 
+    int MerkleHash(string post, int transactions[]) {
+        int finalHash;
+        int intialHashes[];
+
+
+        for (int i = 0; i <= 11; ++) {
+            cout <<
+        }
+
+        //HASH 1: hash all of them using SHA-256
+
+        //pair up into pairs of 2, doesn't matter if a post goes with a transaction
+
+        //HASH 2: Hash these pairs using SHA-2
+
+        //continue pairing and hashing until one value is reached
+
+        return finalHash;
+    }
+
 };
 
-int MerkleHash(string posts[], int transactions[]) {
-    int finalHash;
 
-    //figure out how many posts and transactions
-
-    //HASH 1: hash all of them using SHA-2
-
-    //pair up into pairs of 2, doesn't matter if a post goes with a transaction
-
-    //HASH 2: Hash these pairs using SHA-2
-
-    //continue pairing and hashing until one value is reached
-
-    return finalHash;
-
-    //
-
-}
