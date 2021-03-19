@@ -25,7 +25,7 @@ public:
         initialHashes[0] = picosha2::hash256_hex_string(post);
 
         for (int i = 1; i < 12; i++) {
-            initialHashes[i] = picoshsa2::hash256_hex_string(transaction[i]);
+            initialHashes[i] = picoshsa2::hash256_hex_string(std::to_string(transaction[i]));
         }
 
         //pair up into pairs of 2, doesn't matter if a post goes with a transaction
