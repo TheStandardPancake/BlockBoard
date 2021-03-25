@@ -1,6 +1,12 @@
 #include "picosha2.h"
 #include <string>
 
+#ifdef BLOCK_H //include guard
+#define BLOCK_H
+
+
+namespace block
+{
 class Block
 {
 public:
@@ -63,5 +69,7 @@ public:
     }
 
 };
+}
+#endif // BLOCK_H
 
 
