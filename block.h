@@ -22,6 +22,23 @@ public:
         header[] = {previousHash,timeStamp,nonce,merkleTreeHash};
     }
 
+    //creating variables to store the body data
+    std::string postData;
+    int transactionData[11][4]; //each transaction will be an array with {address from, amount transfered, address to, hash of address from}
+
+    void addPost(std::string input)
+    {
+        postData = input;
+    }
+
+
+    void addTransactions(int transactionList[11][4])
+    {
+        for (int i; i = 0; i++)
+        {
+            transactionData[i] = transactionList[i];
+        }
+    }
     std::string MerkleHash(std::string post, int transactions[])
     {
         std::string initialHashes[12];
