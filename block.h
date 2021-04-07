@@ -52,7 +52,7 @@ public:
 
         for (int i = 1; i < 12; i++)
         {
-            initialHashes[i] = picosha2::hash256_hex_string(std::to_string(transactions[i]));
+            initialHashes[i] = picosha2::hash256_hex_string(std::to_string(transactions[i][0])+std::to_string(transactions[i][1])+std::to_string(transactions[i][2])+std::to_string(transactions[i][3]));
         }
 
         //pair up into pairs of 2, doesn't matter if a post goes with a transaction
