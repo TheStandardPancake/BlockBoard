@@ -1,6 +1,14 @@
 #include "picosha2.h"
 #include <string>
 
+/** THIS HEADER FILE IS USED FOR CREATION AND STORAGE OF INDIVIDUAL BLOCK DATA AND PROVIDES THE FOLLOWING FUNCTIONS
+* CreateHeader( previousHash(string), timeStamp(int), nonce(int), merkleTreeHash(string) ) --> This will store all the header data for an instance of the class (AKA each block)
+* addPost( postData(string) ) --> This will take the post data as a string and store it in the block
+* addTransactions( transactionList(int[11][4]) ) --> This will take a list of transaction data and store it in the block
+* MerkleHash( post(string), transactions(int[])) --> This will hash all the post data and transaction data together and return a SHA256 string of the hashed result.
+*/
+
+
 #ifndef BLOCK_H //include guard
 #define BLOCK_H
 
@@ -9,21 +17,25 @@ namespace block
 class Block
 {
 public:
-    //creating variables to store a blocks header data
-    int previousHash;
+    //____________________________The Header____________________________
+
+    std::string previousHash;
     int timeStamp;
     int nonce;
-    int merkleTreeHash;
-    int header[4];
+    std::string merkleTreeHash;
 
-    void CreateHeader()
+    void CreateHeader(std::string pH, int tS, int n, std::string mTH)
     {
-        header[] = {previousHash,timeStamp,nonce,merkleTreeHash};
+        previousHash = pH;
+        timeStamp = tS
+        nonce = n;
+        merkleTreeHash = mTH;
     }
 
-    //creating variables to store the body data
+    //_____________________________The Body_____________________________
+
     std::string postData;
-    int transactionData[11][4]; //each transaction will be an array with {address from, amount transfered, address to, hash of address from}
+    int transactionData[11][4]; //each transaction will be an array with {address from, amount transfered, address to, hashed transaction data by address from}
 
     void addPost(std::string input)
     {
@@ -38,6 +50,9 @@ public:
             transactionData[i] = transactionList[i];
         }
     }
+
+    //-------------------------------------------------------------Hashing
+
     std::string MerkleHash(std::string post, int transactions[])
     {
         std::string initialHashes[12];
