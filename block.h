@@ -28,7 +28,7 @@ public:
     {
         previousHash = pH;
         timeStamp = tS
-        nonce = n;
+                    nonce = n;
         merkleTreeHash = mTH;
     }
 
@@ -51,7 +51,7 @@ public:
         }
     }
 
-    //-------------------------------------------------------------Hashing
+    //--------------------------------------------------------------Hashing~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
 
     std::string MerkleHash(std::string post, int transactions[])
     {
