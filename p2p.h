@@ -2,8 +2,6 @@
 #include <WS2tcpip.h>
 #include <string>
 
-#pragma comment (lib, "ws2_32")
-
 using namespace std;
 
 #ifndef P2P_H
@@ -35,6 +33,61 @@ void searchNodes()
 
 //--------------------------------------------------------------create a connection to a tcp server~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
 
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Anoying re-implementation of a library that isn't working (inet_pton isn't working from <WS2tcpip.h>) $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+#define NS_INADDRSZ  4
+#define NS_IN6ADDRSZ 16
+#define NS_INT16SZ   2
+
+int inet_pton4(const char *src, in_addr *dst)
+{
+    uint8_t tmp[NS_INADDRSZ], *tp;
+
+    int saw_digit = 0;
+    int octets = 0;
+    *(tp = tmp) = 0;
+
+    int ch;
+    while ((ch = *src++) != '\0')
+    {
+        if (ch >= '0' && ch <= '9')
+        {
+            uint32_t n = *tp * 10 + (ch - '0');
+
+            if (saw_digit && *tp == 0)
+                return 0;
+
+            if (n > 255)
+                return 0;
+
+            *tp = n;
+            if (!saw_digit)
+            {
+                if (++octets > 4)
+                    return 0;
+                saw_digit = 1;
+            }
+        }
+        else if (ch == '.' && saw_digit)
+        {
+            if (octets == 4)
+                return 0;
+            *++tp = 0;
+            saw_digit = 0;
+        }
+        else
+            return 0;
+    }
+    if (octets < 4)
+        return 0;
+
+    memcpy(dst, tmp, NS_INADDRSZ);
+
+    return 1;
+}
+
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ End of ugly code grafting $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
+
 void Client(string targetIP)
 {
     // Initialize WinSock
@@ -60,7 +113,7 @@ void Client(string targetIP)
     sockaddr_in hint;
     hint.sin_family = AF_INET;
     hint.sin_port = htons(targetPORT);
-    inet_pton(AF_INET, targetIP.c_str(), &hint.sin_addr);
+    inet_pton4(targetIP.c_str(), &hint.sin_addr);
 
     // Connect to server
     int connResult = connect(sock, (sockaddr*)&hint, sizeof(hint));

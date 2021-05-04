@@ -5,6 +5,6 @@
 
 int main()
 {
-    p2p::client("127.0.0.1");
+    p2p::Server();
     return 0;
 }
