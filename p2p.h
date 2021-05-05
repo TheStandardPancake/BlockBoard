@@ -203,7 +203,7 @@ void Server()
     char host[NI_MAXHOST];		// Client's remote name
     char service[NI_MAXSERV];	// Service (i.e. port) the client is connect on
 
-    ZeroMemory(host, NI_MAXHOST); // same as memset(host, 0, NI_MAXHOST);
+    ZeroMemory(host, NI_MAXHOST);
     ZeroMemory(service, NI_MAXSERV);
 
     if (getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0)
