@@ -1,3 +1,28 @@
+/**
+*Copyright 2021 Boyd Kirkman
+*
+*This file is part of BlockBoard.
+*
+*    BlockBoard is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    BlockBoard is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with BlockBoard.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+/** THIS HEADER FILE IS USED FOR CONNECTION IN THE P2P NETWORK AND PROVIDES THE FOLLOWING FUNCTIONS
+* searchNodes() --> This will scan through the internet to find any computers acting as nodes in the p2p network, it will exchange any known other node ip's between both computers.
+* Client( targetIP(string) ) --> This will take the ip given and attempt to connect to it on the port <targetPORT>. The IP must be given in the form "X.X.X.X" as a string where each X is one or more digits.
+* Server() --> This will setup a server running on the local computer that accepts incomming connections on port <targetPORT>.
+*/
+
 #include <iostream>
 #include <WS2tcpip.h>
 #include <string>
@@ -6,16 +31,6 @@ using namespace std;
 
 #ifndef P2P_H
 #define P2P_H
-
-
-/** THIS HEADER FILE IS USED FOR CONNECTION IN THE P2P NETWORK AND PROVIDES THE FOLLOWING FUNCTIONS
-* searchNodes() --> This will scan through the internet to find any computers acting as nodes in the p2p network, it will exchange any known other node ip's between both computers.
-* Client( targetIP(string) ) --> This will take the ip given and attempt to connect to it on the port <targetPORT>. The IP must be given in the form "X.X.X.X" as a string where each X is one or more digits.
-* Server() --> This will setup a server running on the local computer that accepts incomming connections on port <targetPORT>.
-*/
-
-
-
 
 namespace p2p
 {

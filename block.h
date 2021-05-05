@@ -1,5 +1,21 @@
-#include "picosha2.h"
-#include <string>
+/**
+*Copyright 2021 Boyd Kirkman
+*
+*This file is part of BlockBoard.
+*
+*    BlockBoard is free software: you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation, either version 3 of the License, or
+*    (at your option) any later version.
+*
+*    BlockBoard is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with BlockBoard.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
 /** THIS HEADER FILE IS USED FOR CREATION AND STORAGE OF INDIVIDUAL BLOCK DATA AND PROVIDES THE FOLLOWING FUNCTIONS
 * CreateHeader( previousHash(string), timeStamp(int), nonce(int), merkleTreeHash(string) ) --> This will store all the header data for an instance of the class (AKA each block)
@@ -8,6 +24,8 @@
 * MerkleHash( post(string), transactions(int[])) --> This will hash all the post data and transaction data together and return a SHA256 string of the hashed result.
 */
 
+#include "picosha2.h"
+#include <string>
 
 #ifndef BLOCK_H //include guard
 #define BLOCK_H
