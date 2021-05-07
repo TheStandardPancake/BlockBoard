@@ -18,9 +18,16 @@
 */
 
 /** THIS HEADER FILE IS USED FOR CONNECTION IN THE P2P NETWORK AND PROVIDES THE FOLLOWING FUNCTIONS
-* searchNodes() --> This will scan through the internet to find any computers acting as nodes in the p2p network, it will exchange any known other node ip's between both computers.
-* Client( targetIP(string) ) --> This will take the ip given and attempt to connect to it on the port <targetPORT>. The IP must be given in the form "X.X.X.X" as a string where each X is one or more digits.
-* Server() --> This will setup a server running on the local computer that accepts incomming connections on port <targetPORT>.
+* searchNodes() --> This will scan through the internet to find any computers acting as nodes in the p2p network,
+*                   it will exchange any known other node ip's between both computers.
+*
+* Client( targetIP(string) ) --> This will take the ip given and attempt to connect to it on the port <targetPORT>.
+*                   The IP must be given in the form "X.X.X.X" as a string where each X is one or more digits.
+*
+* Server( ID(string), SERVER_SHARE(boolean), COLLECTING(boolean) ) --> This will setup a server running on the local computer
+*                   that accepts incomming connections on port <targetPORT>. ID can be either "MINER" or "NODE",
+*                   SERVER_SHARE is wether or not the server is willing to share its other known nodes/miners,
+*                   COLLECTING is wether or not the server is both mining, and accepting transactions to form blocks.
 */
 
 #include <iostream>
@@ -177,7 +184,7 @@ void Client(string targetIP)
 
 //--------------------------------------------------------------host a tcp server~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
 
-void Server()
+void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
 {
     // Initialze winsock
     WSADATA wsData;
@@ -232,7 +239,9 @@ void Server()
     // While loop: accept and echo message back to client
     char buf[4096];
 
-    while (true)
+    boolean exchangingInfo = true;
+
+    while (exchangingInfo)
     {
         ZeroMemory(buf, 4096);
 
@@ -249,12 +258,83 @@ void Server()
             cout << "Client disconnected " << endl;
             break;
         }
+        switch (string(buf, 0, bytesReceived))
+        {
+        case "ID_CHECK":
+            //send back as to if this is a "MINER" or a "NODE"
+            send(clientSocket, ID.c_str(), ID.size() + 1, 0);
+            break;
 
-        cout << string(buf, 0, bytesReceived) << endl;
+        case "SERVER_SHARE":
+            //send back as to if this server is willing to share its other known nodes -- sends either "YES" or "NO"
+            string yes = "YES";
+            string no = "NO";
+            if (SERVER_SHARE)
+            {
+                send(clientSocket, yes.c_str(), yes.size() + 1, 0); //send "YES"
+            }
+            else
+            {
+                send(clientSocket, no.c_str(), no.size() + 1, 0); //send "NO"
+            }
 
-        // Echo message back to client
-        send(clientSocket, buf, bytesReceived + 1, 0);
 
+            //Await response -- should expect a series of ip addresses
+            ZeroMemory(buf, 4096);
+            int bytesReceived = recv(clientSocket, buf, 4096, 0);
+            if (bytesReceived == SOCKET_ERROR)
+            {
+                cerr << "Error in recv(). Quitting" << endl;
+                break;
+            }
+
+            if (bytesReceived == 0)
+            {
+                cout << "Client disconnected " << endl;
+                break;
+            }
+
+            //Send a series of ip addresses
+            send(clientSocket, buf, bytesReceived + 1, 0); //send a list of IP addresses
+            break;
+
+        case "CHAIN_EXCH":
+            //Send the block chain somehow
+
+            //Recieve the block chain somehow
+            break;
+
+        case "TRANSACTION":
+            //send back as to if this program is "COLLECTING" transactions or if it is "CLOSED"
+            string yes = "COLLECTING";
+            string no = "CLOSED";
+            if (COLLECTING)
+            {
+                send(clientSocket, yes.c_str(), yes.size() + 1, 0); //send "COLLECTING"
+            }
+            else
+            {
+                send(clientSocket, no.c_str(), no.size() + 1, 0); //send "CLOSED"
+            }
+
+            //if "COLLECTING" then recieve the transaction
+            ZeroMemory(buf, 4096);
+            int bytesReceived = recv(clientSocket, buf, 4096, 0);
+            if (bytesReceived == SOCKET_ERROR)
+            {
+                cerr << "Error in recv(). Quitting" << endl;
+                break;
+            }
+
+            if (bytesReceived == 0)
+            {
+                cout << "Client disconnected " << endl;
+                break;
+            }
+            break;
+        case "DISCONNECT":
+            exchangingInfo = false;
+        }
     }
 
     // Close the socket
