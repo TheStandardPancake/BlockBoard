@@ -118,7 +118,7 @@ void Client(string targetIP)
     int wsResult = WSAStartup(ver, &data);
     if (wsResult != 0)
     {
-        cerr << "Can't start Winsock, Err #" << wsResult << endl;
+        cerr << "Can't start Winsock" << wsResult << endl;
         return;
     }
 
@@ -126,7 +126,7 @@ void Client(string targetIP)
     SOCKET sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == INVALID_SOCKET)
     {
-        cerr << "Can't create socket, Err #" << WSAGetLastError() << endl;
+        cerr << "Can't create socket" << WSAGetLastError() << endl;
         WSACleanup();
         return;
     }
@@ -141,7 +141,7 @@ void Client(string targetIP)
     int connResult = connect(sock, (sockaddr*)&hint, sizeof(hint));
     if (connResult == SOCKET_ERROR)
     {
-        cerr << "Can't connect to server, Err #" << WSAGetLastError() << endl;
+        cerr << "Can't connect to server" << WSAGetLastError() << endl;
         closesocket(sock);
         WSACleanup();
         return;
@@ -193,7 +193,7 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
     int wsOk = WSAStartup(ver, &wsData);
     if (wsOk != 0)
     {
-        cerr << "Can't Initialize winsock! Quitting" << endl;
+        cerr << "Can't Initialize winsock" << endl;
         return;
     }
 
@@ -201,7 +201,7 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
     SOCKET listening = socket(AF_INET, SOCK_STREAM, 0);
     if (listening == INVALID_SOCKET)
     {
-        cerr << "Can't create a socket! Quitting" << endl;
+        cerr << "Can't create a socket" << endl;
         return;
     }
 
@@ -249,15 +249,18 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
         int bytesReceived = recv(clientSocket, buf, 4096, 0);
         if (bytesReceived == SOCKET_ERROR)
         {
-            cerr << "Error in recv(). Quitting" << endl;
+            cerr << "Error in recv()" << endl;
+            exchangingInfo = false;
+            break;
+        }
+        if (bytesReceived == 0)
+        {
+            cout << "Client disconnected" << endl;
+            exchangingInfo = false;
             break;
         }
 
-        if (bytesReceived == 0)
-        {
-            cout << "Client disconnected " << endl;
-            break;
-        }
+        //Handle the various different requests
         switch (string(buf, 0, bytesReceived))
         {
         case "ID_CHECK":
@@ -278,21 +281,23 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 send(clientSocket, no.c_str(), no.size() + 1, 0); //send "NO"
             }
 
-
             //Await response -- should expect a series of ip addresses
             ZeroMemory(buf, 4096);
             int bytesReceived = recv(clientSocket, buf, 4096, 0);
             if (bytesReceived == SOCKET_ERROR)
             {
-                cerr << "Error in recv(). Quitting" << endl;
+                cerr << "Error in recv()" << endl;
+                exchangingInfo = false;
+                break;
+            }
+            if (bytesReceived == 0)
+            {
+                cout << "Client disconnected" << endl;
+                exchangingInfo = false;
                 break;
             }
 
-            if (bytesReceived == 0)
-            {
-                cout << "Client disconnected " << endl;
-                break;
-            }
+            cout << string(buf, 0, bytesReceived) << endl;
 
             //Send a series of ip addresses
             send(clientSocket, buf, bytesReceived + 1, 0); //send a list of IP addresses
@@ -322,16 +327,19 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
             int bytesReceived = recv(clientSocket, buf, 4096, 0);
             if (bytesReceived == SOCKET_ERROR)
             {
-                cerr << "Error in recv(). Quitting" << endl;
+                cerr << "Error in recv()" << endl;
+                exchangingInfo = false;
                 break;
             }
-
             if (bytesReceived == 0)
             {
-                cout << "Client disconnected " << endl;
+                cout << "Client disconnected" << endl;
+                exchangingInfo = false;
                 break;
             }
+            cout << string(buf, 0, bytesReceived) << endl;
             break;
+
         case "DISCONNECT":
             exchangingInfo = false;
         }
