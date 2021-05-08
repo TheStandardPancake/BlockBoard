@@ -298,10 +298,13 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 break;
             }
 
-            cout << string(buf, 0, bytesReceived) << endl;
-
             //Send a series of ip addresses
-            send(clientSocket, buf, bytesReceived + 1, 0); //send a list of IP addresses
+            vector<string> IPList = fileRead::nodeIPs()
+            for (int i; i < IPList.size(); i++)
+            {
+                send(clientSocket, IPList[i].c_str(), IPList[i].size() + 1, 0); //send the IP
+            }
+
             break;
 
         case "CHAIN_EXCH":

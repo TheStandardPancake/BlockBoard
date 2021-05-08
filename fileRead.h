@@ -39,9 +39,9 @@ namespace fileRead
 
 //--------------------------------------------------------------Return a list of the known IPv4 addresses in the network~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
 
-vector <string> nodeIPs()
+vector<string> nodeIPs()
 {
-    vector <string> IPArray;
+    vector<string> IPArray;
     string line;
     ifstream IPAddressList ("NetworkAddressList.txt");
     if (IPAdressList.is_open())
