@@ -33,7 +33,7 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include <string>
-#include <fileRead.h>
+#include "fileRead.h"
 
 using namespace std;
 
@@ -237,7 +237,6 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
     // Close listening socket
     closesocket(listening);
 
-    // While loop: accept and echo message back to client
     char buf[4096];
 
     boolean exchangingInfo = true;
@@ -262,58 +261,61 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
         }
 
         //Handle the various different requests
-        switch (string(buf, 0, bytesReceived))
+        string recievedString = string(buf, 0, bytesReceived);
+
+        if (recievedString == "ID_CHECK")
         {
-        case "ID_CHECK":
             //send back as to if this is a "MINER" or a "NODE"
             send(clientSocket, ID.c_str(), ID.size() + 1, 0);
-            break;
-
-        case "SERVER_SHARE":
+        }
+        else if (recievedString == "SERVER_SHARE")
+        {
             //send back as to if this server is willing to share its other known nodes -- sends either "YES" or "NO"
             string yes = "YES";
             string no = "NO";
             if (SERVER_SHARE)
             {
                 send(clientSocket, yes.c_str(), yes.size() + 1, 0); //send "YES"
+
+                //Await response -- should expect a series of ip addresses
+                ZeroMemory(buf, 4096);
+                int bytesReceived = recv(clientSocket, buf, 4096, 0);
+                if (bytesReceived == SOCKET_ERROR)
+                {
+                    cerr << "Error in recv()" << endl;
+                    exchangingInfo = false;
+                    break;
+                }
+                if (bytesReceived == 0)
+                {
+                    cout << "Client disconnected" << endl;
+                    exchangingInfo = false;
+                    break;
+                }
+
+                //for each recieved IP check if it is in the list already and if not add it
+
+
+                //Send a series of ip addresses
+                vector<string> IPList = fileRead::nodeIPs();
+                for (int i; i < IPList.size(); i++)
+                {
+                    send(clientSocket, IPList[i].c_str(), IPList[i].size() + 1, 0); //send the IP
+                }
             }
             else
             {
                 send(clientSocket, no.c_str(), no.size() + 1, 0); //send "NO"
             }
-
-            //Await response -- should expect a series of ip addresses
-            ZeroMemory(buf, 4096);
-            int bytesReceived = recv(clientSocket, buf, 4096, 0);
-            if (bytesReceived == SOCKET_ERROR)
-            {
-                cerr << "Error in recv()" << endl;
-                exchangingInfo = false;
-                break;
-            }
-            if (bytesReceived == 0)
-            {
-                cout << "Client disconnected" << endl;
-                exchangingInfo = false;
-                break;
-            }
-
-            //Send a series of ip addresses
-            vector<string> IPList = fileRead::nodeIPs()
-            for (int i; i < IPList.size(); i++)
-            {
-                send(clientSocket, IPList[i].c_str(), IPList[i].size() + 1, 0); //send the IP
-            }
-
-            break;
-
-        case "CHAIN_EXCH":
+        }
+        else if (recievedString == "CHAIN_EXCH")
+        {
             //Send the block chain somehow
 
             //Recieve the block chain somehow
-            break;
-
-        case "TRANSACTION":
+        }
+        else if (recievedString == "TRANSACTION")
+        {
             //send back as to if this program is "COLLECTING" transactions or if it is "CLOSED"
             string yes = "COLLECTING";
             string no = "CLOSED";
@@ -342,17 +344,24 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 break;
             }
             cout << string(buf, 0, bytesReceived) << endl;
-            break;
-
-        case "DISCONNECT":
-            exchangingInfo = false;
         }
+        else if (recievedString == "DISCONNECT")
+        {
+            exchangingInfo = false;
+            break;
+        }
+        else //handle an invalid request
+        {
+            string invalid = "UNKOWN_REQUEST";
+            send(clientSocket, invalid.c_str(), invalid.size() + 1, 0);
+        }
+
     }
 
-    // Close the socket
+// Close the socket
     closesocket(clientSocket);
 
-    // Cleanup winsock
+// Cleanup winsock
     WSACleanup();
 }
 } //namespace p2p

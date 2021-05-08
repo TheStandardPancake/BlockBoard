@@ -44,7 +44,7 @@ vector<string> nodeIPs()
     vector<string> IPArray;
     string line;
     ifstream IPAddressList ("NetworkAddressList.txt");
-    if (IPAdressList.is_open())
+    if (IPAddressList.is_open())
     {
         while (getline(IPAddressList,line))
         {

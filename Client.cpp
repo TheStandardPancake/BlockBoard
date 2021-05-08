@@ -24,6 +24,6 @@
 
 int main()
 {
-    p2p::Server("NODE", false, false);
+    p2p::Client("127.0.0.1");
     return 0;
 }
