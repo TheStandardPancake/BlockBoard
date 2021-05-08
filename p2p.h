@@ -17,7 +17,7 @@
 *    along with BlockBoard.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/** THIS HEADER FILE IS USED FOR CONNECTION IN THE P2P NETWORK AND PROVIDES THE FOLLOWING FUNCTIONS
+/** THIS HEADER FILE IS USED FOR CONNECTION IN THE P2P NETWORK AND PROVIDES THE FOLLOWING FUNCTIONS:
 * searchNodes() --> This will scan through the internet to find any computers acting as nodes in the p2p network,
 *                   it will exchange any known other node ip's between both computers.
 *
@@ -33,6 +33,7 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include <string>
+#include <fileRead.h>
 
 using namespace std;
 
