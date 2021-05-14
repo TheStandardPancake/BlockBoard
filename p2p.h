@@ -21,7 +21,9 @@
 * searchNodes() --> This will scan through the internet to find any computers acting as nodes in the p2p network,
 *                   it will exchange any known other node ip's between both computers.
 *
-* Client( targetIP(string) ) --> This will take the ip given and attempt to connect to it on the port <targetPORT>.
+* Client( targetIP(string), serverShare(boolean), blockChain(boolean) --> This will take the ip given and attempt to
+*                   connect to it on the port <targetPORT>. serverShare dictates if it will share server lists. blockChain is
+*                   the state of if the client already has a blockchain or not.
 *                   The IP must be given in the form "X.X.X.X" as a string where each X is one or more digits.
 *
 * Server( ID(string), SERVER_SHARE(boolean), COLLECTING(boolean) ) --> This will setup a server running on the local computer
@@ -33,6 +35,7 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include <string>
+#include <vector>
 #include "fileRead.h"
 
 using namespace std;
@@ -111,7 +114,7 @@ int inet_pton4(const char *src, in_addr *dst)
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ End of ugly code grafting $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
-void Client(string targetIP)
+void Client(string targetIP, boolean shareServers, boolean blockChain)
 {
     // Initialize WinSock
     WSAData data;
@@ -150,33 +153,56 @@ void Client(string targetIP)
 
     // Do-while loop to send and receive data
     char buf[4096];
-    string userInput;
 
-    do
+    //Querying the Server
+
+    //Send an ID_CHECK
+    string query = "ID_CHECK";
+    send(clientSocket, query.c_str(), ID.size() + 1, 0);
+    //Wait for response
+    ZeroMemory(buf, 4096);
+    int bytesReceived = recv(sock, buf, 4096, 0);
+    string recievedString = string(buf, 0, bytesReceived);
+    if (recievedString == "NODE" OR recievedString == "MINER")
     {
-        // Prompt the user for some text
-        cout << "> ";
-        getline(cin, userInput);
-
-        if (userInput.size() > 0)		// Make sure the user has typed in something
-        {
-            // Send the text
-            int sendResult = send(sock, userInput.c_str(), userInput.size() + 1, 0);
-            if (sendResult != SOCKET_ERROR)
-            {
-                // Wait for response
-                ZeroMemory(buf, 4096);
-                int bytesReceived = recv(sock, buf, 4096, 0);
-                if (bytesReceived > 0)
-                {
-                    // Echo response to console
-                    cout << "SERVER> " << string(buf, 0, bytesReceived) << endl;
-                }
-            }
-        }
-
+        //write IP to the list of known IPs
+        fileRead::writeIP(targetIP);
     }
-    while (userInput.size() > 0);
+
+    //Exchange IP lists
+    if (serverShare)
+    {
+        string query = "SERVER_SHARE";
+        send(clientSocket, query.c_str(), ID.size() + 1, 0);
+        //Wait for response
+        ZeroMemory(buf, 4096);
+        int bytesReceived = recv(sock, buf, 4096, 0);
+        string recievedString = string(buf, 0, bytesReceived);
+        if (recievedString == "YES")
+        {
+            //send over the ip's
+            vector<string> ipSends = fileRead::nodeIPs;
+            string sendingString = "";
+            for (vector<string>::iterator ip = ipSends.begin(); ip != ipSends.end(); ip++)
+            {
+                sendingString = sendingSring+*ip+","
+            }
+            send(clientSocket, sendingString.c_str(), ID.size() + 1, 0);
+        }
+    }
+
+    //Exchange the Block Chain
+    string query = "CHAIN_EXCH";
+    send(clientSocket, query.c_str(), ID.size() + 1, 0);
+    //Wait for response
+    ZeroMemory(buf, 4096);
+    int bytesReceived = recv(sock, buf, 4096, 0);
+    string recievedString = string(buf, 0, bytesReceived);
+    //Send the current block chain (if there is one)
+    if (blockChain)
+    {
+        continue;
+    }
 
     // Gracefully close down everything
     closesocket(sock);
@@ -210,7 +236,7 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
     sockaddr_in hint;
     hint.sin_family = AF_INET;
     hint.sin_port = htons(targetPORT);
-    hint.sin_addr.S_un.S_addr = INADDR_ANY; // Could also use inet_pton ....
+    hint.sin_addr.S_un.S_addr = INADDR_ANY;
 
     bind(listening, (sockaddr*)&hint, sizeof(hint));
 

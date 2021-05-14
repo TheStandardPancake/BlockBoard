@@ -17,13 +17,17 @@
 *    along with BlockBoard.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "picosha2.h"
-#include "p2p.h"
+//#include "picosha2.h"
+//#include "p2p.h"
+#include "fileRead.h"
 #include <string>
 #include <iostream>
+using namespace std;
 
 int main()
 {
-    p2p::Client("127.0.0.1");
+    vector<string> file = fileRead::nodeIPs();
+    cout << file[1];
+    //p2p::Client("127.0.0.1");
     return 0;
 }
