@@ -23,6 +23,8 @@
 *
 * writeIP( IP(string) ) --> This will add the input IP (IPv4) address onto the end of NetworkAddressList.txt.
 *
+* inIPList( IP(string) ) --> This will return true if the input ip is in NetworkAddressList.txt, else it will return false.
+*
 */
 
 #include <iostream>
@@ -65,6 +67,26 @@ void writeIP(string IP)
         IPFile << IP << "\n";
         IPFile.close();
     }
+}
+
+//--------------------------------------------------------------Check if an ip is in the list of knwon ips~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
+boolean inIPList(string IP)
+{
+    boolean inFile = false;
+    vector<string> IPArray;
+    string line;
+    ifstream IPAddressList ("NetworkAddressList.txt");
+    if (IPAddressList.is_open())
+    {
+        while (getline(IPAddressList,line))
+        {
+            if (IP == line)
+            {
+                inFile = true;
+            }
+        }
+    }
+    return inFile;
 }
 
 } //namespace fileRead

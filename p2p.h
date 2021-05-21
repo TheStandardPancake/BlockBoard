@@ -21,7 +21,7 @@
 * searchNodes() --> This will scan through the internet to find any computers acting as nodes in the p2p network,
 *                   it will exchange any known other node ip's between both computers.
 *
-* Client( targetIP(string), serverShare(boolean), blockChain(boolean) --> This will take the ip given and attempt to
+* Client( targetIP(string), serverShare(boolean), blockChain(boolean) ) --> This will take the ip given and attempt to
 *                   connect to it on the port <targetPORT>. serverShare dictates if it will share server lists. blockChain is
 *                   the state of if the client already has a blockchain or not.
 *                   The IP must be given in the form "X.X.X.X" as a string where each X is one or more digits.
@@ -36,6 +36,7 @@
 #include <WS2tcpip.h>
 #include <string>
 #include <vector>
+#include <pystring.h>
 #include "fileRead.h"
 
 using namespace std;
@@ -319,15 +320,28 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                     break;
                 }
 
-                //for each recieved IP check if it is in the list already and if not add it
+                //split the recieved string into a list
+                string recievedString = string(buf, 0, bytesReceived);
+                vector <string> recievedIPList;
+                pystring::split(recievedString, recievedIPList, ",");
 
+                //for each recieved IP check if it is in the list already and if not add it
+                for(vector<string>::iterator ip = recievedIPList.begin(); ip != recievedIPList.end(); ip++)
+                {
+                    if (!fileRead::inIPList(ip))
+                    {
+                        fileRead::writeIP(ip);
+                    }
+                }
 
                 //Send a series of ip addresses
-                vector<string> IPList = fileRead::nodeIPs();
-                for (int i; i < IPList.size(); i++)
+                vector<string> ipSends = fileRead::nodeIPs;
+                string sendingString = "";
+                for (vector<string>::iterator ip = ipSends.begin(); ip != ipSends.end(); ip++)
                 {
-                    send(clientSocket, IPList[i].c_str(), IPList[i].size() + 1, 0); //send the IP
+                    sendingString = sendingSring+*ip+","
                 }
+                send(clientSocket, sendingString.c_str(), ID.size() + 1, 0);
             }
             else
             {
