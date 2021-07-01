@@ -51,6 +51,7 @@ HMENU hMenu;
 
 //Handle logining in and key collection
 void login(HWND);
+void homePage(HWND);
 HWND hKey;
 wchar_t key[100];
 
@@ -64,7 +65,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
 {
     WNDCLASSW wc = {0};
 
-    wc.hbrBackground = (HBRUSH)SETTINGS;
+    wc.hbrBackground = (HBRUSH)3;
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hInstance = hInst;
     wc.lpszClassName = L"WindowClass";
@@ -118,41 +119,54 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             windowState = SETTINGS;
             break;
         case SUBMIT_KEY:
-            GetWindowTextW(hKey, key, 100);
+            GetWindowTextW(hKey, key, 100); // collect the key submitted and save in the variable named "key"
             windowState = HOME;
             menu(hWnd); // setup the menu
+            UpdateWindow(hWnd);
             break;
         }
         break;
-    case WM_CREATE: //this is where the gui elements are built on the window
+    case WM_CREATE: //this is when the window is first created
+        login(hWnd);
+        UpdateWindow(hWnd);
+        break;
+    case WM_PAINT:
         switch(windowState)
         {
         case HOME:
-            menu(hWnd); // setup the menu
-            //homePage(hWnd);
+        {
+
+            //menu(hWnd); // setup the menu
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hWnd, &ps);
+            // All painting occurs here, between BeginPaint and EndPaint.
+            FillRect(hdc, &ps.rcPaint, (HBRUSH)3);
+            EndPaint(hWnd, &ps);
+            UpdateWindow(hWnd);
+            homePage(hWnd);
+            windowState = 0;
             break;
+        }
         case SEND_PP:
-            menu(hWnd); // setup the menu
+            //menu(hWnd); // setup the menu
             break;
         case RECIEVE_PP:
-            menu(hWnd); // setup the menu
+            //menu(hWnd); // setup the menu
             break;
         case VIEW_POSTS:
-            menu(hWnd); // setup the menu
+            //menu(hWnd); // setup the menu
             break;
         case CREATE_POSTS:
-            menu(hWnd); // setup the menu
+            //menu(hWnd); // setup the menu
             break;
         case VIEW_BAL_TRANS:
-            menu(hWnd); // setup the menu
+            //menu(hWnd); // setup the menu
             break;
         case SETTINGS:
-            menu(hWnd); // setup the menu
+            //menu(hWnd); // setup the menu
             break;
-        default:
-            login(hWnd);
         }
-
+        UpdateWindow(hWnd);
         break;
     case WM_DESTROY: //This handles when the window is closed
         PostQuitMessage(0);
@@ -178,7 +192,12 @@ void menu(HWND hWnd) //setting up of the menu
 
 void login(HWND hWnd)
 {
-    CreateWindowW(L"Static", L"Enter Your Key:", WS_VISIBLE | WS_CHILD | SS_CENTER, 400, 200, 100, 50, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Static", L"Enter Your Key:", WS_VISIBLE | WS_CHILD | SS_CENTER, 400, 200, 100, 35, hWnd, NULL, NULL, NULL);
     hKey = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_PASSWORD, 325, 250, 250, 20, hWnd, NULL, NULL, NULL);
     CreateWindowW(L"Button", L"Submit", WS_VISIBLE | WS_CHILD | SS_CENTER, 413, 275, 75, 25, hWnd, (HMENU)SUBMIT_KEY, NULL, NULL);
+}
+
+void homePage(HWND hWnd)
+{
+    CreateWindowW(L"Static", L"banana", WS_VISIBLE | WS_CHILD | SS_CENTER, 470, 220, 100, 50, hWnd, NULL, NULL, NULL);
 }
