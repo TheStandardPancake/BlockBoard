@@ -42,6 +42,8 @@ TODO:
 #define SUBMIT_KEY 8
 
 int windowState = 0;
+int WIDTH = 900;
+int HEIGHT = 650;
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
@@ -49,14 +51,22 @@ LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 void menu(HWND);
 HMENU hMenu;
 
-//Handle logining in and key collection
+//Handle the different pages (These are the prototype functions
 void login(HWND);
 void homePage(HWND);
+void send(HWND);
+void recieve(HWND);
+void view(HWND);
+void create(HWND);
+void viewBal(HWND);
+void settings(HWND);
+
+//handle key collection
 HWND hKey;
 wchar_t key[100];
 
-//dealing with other pages
-//void homePage(HWND);
+//other misc. prototype functions
+BOOL CALLBACK DestoryChildCallback(HWND, LPARAM);
 
 
 
@@ -77,7 +87,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
         return -1;
     }
 
-    CreateWindowW(L"WindowClass",L"Block Board", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 100, 100, 900, 650, NULL, NULL, NULL, NULL);
+    CreateWindowW(L"WindowClass",L"Block Board", WS_OVERLAPPEDWINDOW | WS_VISIBLE, 100, 100, WIDTH, HEIGHT, NULL, NULL, NULL, NULL);
 
     MSG msg = {0};
 
@@ -135,36 +145,53 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         {
         case HOME:
         {
-
-            //menu(hWnd); // setup the menu
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hWnd, &ps);
-            // All painting occurs here, between BeginPaint and EndPaint.
-            FillRect(hdc, &ps.rcPaint, (HBRUSH)3);
-            EndPaint(hWnd, &ps);
-            UpdateWindow(hWnd);
+            EnumChildWindows(hWnd, DestoryChildCallback, NULL); //clear all child windows
             homePage(hWnd);
             windowState = 0;
             break;
         }
         case SEND_PP:
-            //menu(hWnd); // setup the menu
+        {
+            EnumChildWindows(hWnd, DestoryChildCallback, NULL); //clear all child windows
+            send(hWnd);
+            windowState = 0;
             break;
+        }
         case RECIEVE_PP:
-            //menu(hWnd); // setup the menu
+        {
+            EnumChildWindows(hWnd, DestoryChildCallback, NULL); //clear all child windows
+            recieve(hWnd);
+            windowState = 0;
             break;
+        }
         case VIEW_POSTS:
-            //menu(hWnd); // setup the menu
+        {
+            EnumChildWindows(hWnd, DestoryChildCallback, NULL); //clear all child windows
+            view(hWnd);
+            windowState = 0;
             break;
+        }
         case CREATE_POSTS:
-            //menu(hWnd); // setup the menu
+        {
+            EnumChildWindows(hWnd, DestoryChildCallback, NULL); //clear all child windows
+            create(hWnd);
+            windowState = 0;
             break;
+        }
         case VIEW_BAL_TRANS:
-            //menu(hWnd); // setup the menu
+        {
+            EnumChildWindows(hWnd, DestoryChildCallback, NULL); //clear all child windows
+            viewBal(hWnd);
+            windowState = 0;
             break;
+        }
         case SETTINGS:
-            //menu(hWnd); // setup the menu
+        {
+            EnumChildWindows(hWnd, DestoryChildCallback, NULL); //clear all child windows
+            settings(hWnd);
+            windowState = 0;
             break;
+        }
         }
         UpdateWindow(hWnd);
         break;
@@ -192,12 +219,56 @@ void menu(HWND hWnd) //setting up of the menu
 
 void login(HWND hWnd)
 {
-    CreateWindowW(L"Static", L"Enter Your Key:", WS_VISIBLE | WS_CHILD | SS_CENTER, 400, 200, 100, 35, hWnd, NULL, NULL, NULL);
-    hKey = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_PASSWORD, 325, 250, 250, 20, hWnd, NULL, NULL, NULL);
-    CreateWindowW(L"Button", L"Submit", WS_VISIBLE | WS_CHILD | SS_CENTER, 413, 275, 75, 25, hWnd, (HMENU)SUBMIT_KEY, NULL, NULL);
+    CreateWindowW(L"Static", L"Enter Your Key:", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-50, 50, 100, 35, hWnd, NULL, NULL, NULL);
+    hKey = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_PASSWORD, (WIDTH/2)-125, 250, 250, 20, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Button", L"Submit", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-38, 275, 76, 25, hWnd, (HMENU)SUBMIT_KEY, NULL, NULL);
 }
 
 void homePage(HWND hWnd)
 {
-    CreateWindowW(L"Static", L"banana", WS_VISIBLE | WS_CHILD | SS_CENTER, 470, 220, 100, 50, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Static", L"Welcome to the home page!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-150, 25, 300, 19, hWnd, NULL, NULL, NULL);
 }
+
+void send(HWND hWnd)
+{
+    CreateWindowW(L"Static", L"Send Post Points!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
+}
+
+void recieve(HWND hWnd)
+{
+    CreateWindowW(L"Static", L"Recieve Post Points at the Address Below!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-250, 25, 500, 19, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Static", key, WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-250, 200, 500, 19, hWnd, NULL, NULL, NULL);
+}
+
+void view(HWND hWnd)
+{
+    CreateWindowW(L"Static", L"View Posts Here!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
+}
+
+void create(HWND hWnd)
+{
+    CreateWindowW(L"Static", L"Create Posts Here!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
+}
+
+void viewBal(HWND hWnd)
+{
+    CreateWindowW(L"Static", L"Your Current Balance and Past transactions", WS_VISIBLE | WS_CHILD | SS_CENTER, 250, 25, 400, 19, hWnd, NULL, NULL, NULL);
+}
+
+void settings(HWND hWnd)
+{
+    CreateWindowW(L"Static", L"Settings", WS_VISIBLE | WS_CHILD | SS_CENTER, 400, 25, 100, 19, hWnd, NULL, NULL, NULL);
+}
+
+//------------------Useful functions for clearing windows etc------------------
+
+BOOL CALLBACK DestoryChildCallback(HWND hwnd, LPARAM lParam)
+{
+    if (hwnd != NULL)
+    {
+        DestroyWindow(hwnd);
+    }
+
+    return TRUE;
+}
+

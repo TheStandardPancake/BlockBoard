@@ -19,11 +19,15 @@
 
 /** THIS HEADER FILE IS USED FOR READING FILES SUCH AS THE IP ADDRESS FILE, LIST OF MINER IP'S, AND BLOCKCHAIN DATA THEN RETURN THE INFO IN A PROCESSABLE FORM. IT CONTAINS THE FOLLOWING FUNCTIONS:
 *
-* nodeIPs() --> This will return an string array of all IPv4 addresses listed in NetworkAddressList.txt.
+* nodeIPs() --> This will return a string array of all IPv4 addresses listed in NetworkAddressList.txt.
 *
 * writeIP( IP(string) ) --> This will add the input IP (IPv4) address onto the end of NetworkAddressList.txt.
 *
 * inIPList( IP(string) ) --> This will return true if the input ip is in NetworkAddressList.txt, else it will return false.
+*
+* transactions() --> This will return a string array of all the transactions from the wallet.ppw file.
+*
+* writeTransaction( transaction(string) ) --> This will write a transaction to the wallet.ppw file.
 *
 */
 
@@ -87,6 +91,34 @@ boolean inIPList(string IP)
         }
     }
     return inFile;
+}
+
+//--------------------------------------------------------------Read Through and return the previous transactions from the wallet~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
+vector<string> transactions()
+{
+    vector<string> transactionsArray;
+    string line;
+    ifstream wallet ("wallet.ppw");
+    if (wallet.is_open())
+    {
+        while (getline(wallet,line))
+        {
+            transactionsArray.push_back(line);
+        }
+    }
+    return transactionsArray;
+}
+
+//--------------------------------------------------------------Add a transaction to the wallet~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
+
+void writeTransaction(string transaction)
+{
+    ofstream wallet ("wallet.ppw");
+    if (wallet.is_open())
+    {
+        wallet << transaction << "\n";
+        wallet.close();
+    }
 }
 
 } //namespace fileRead
