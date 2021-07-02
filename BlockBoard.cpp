@@ -31,6 +31,8 @@ TODO:
 */
 
 #include <windows.h>
+#include "picosha2.h"
+#include <string>
 
 #define HOME 1
 #define SEND_PP 2
@@ -63,10 +65,14 @@ void settings(HWND);
 
 //handle key collection
 HWND hKey;
-wchar_t key[100];
+wchar_t lKey[100];
+std::string sKey;
+std::string key;
 
 //other misc. prototype functions
 BOOL CALLBACK DestoryChildCallback(HWND, LPARAM);
+std::string wchar2string(wchar_t*);
+const wchar_t* string2wchar(std::string);
 
 
 
@@ -104,7 +110,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     switch(msg)
     {
-    case WM_COMMAND: //this will handle when a menu item is pressed
+    case WM_COMMAND: //this will handle when a menu item is pressed ----------------------------<<
         switch(wp)
         {
         case HOME:
@@ -129,18 +135,20 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             windowState = SETTINGS;
             break;
         case SUBMIT_KEY:
-            GetWindowTextW(hKey, key, 100); // collect the key submitted and save in the variable named "key"
+            GetWindowTextW(hKey, lKey, 100); // collect the raw key submitted and save in the variable named "lKey"
+            std::string sKey = wchar2string(lKey);
+            key = picosha2::hash256_hex_string(sKey); // convert the key to a SHA256 hash
             windowState = HOME;
             menu(hWnd); // setup the menu
             UpdateWindow(hWnd);
             break;
         }
         break;
-    case WM_CREATE: //this is when the window is first created
+    case WM_CREATE: //this is when the window is first created --------------------------------------<<
         login(hWnd);
         UpdateWindow(hWnd);
         break;
-    case WM_PAINT:
+    case WM_PAINT: // this controls what is painted to the window -----------------------------------<<
         switch(windowState)
         {
         case HOME:
@@ -195,13 +203,15 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         }
         UpdateWindow(hWnd);
         break;
-    case WM_DESTROY: //This handles when the window is closed
+    case WM_DESTROY: //This handles when the window is closed ---------------------------------<
         PostQuitMessage(0);
         break;
     default:
         return DefWindowProcW(hWnd, msg, wp, lp); //handles any messages that are not utalised with the switch
     }
 }
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Functions that handle painting the different windows etc. ---------------------------------------<
 
 void menu(HWND hWnd) //setting up of the menu
 {
@@ -217,50 +227,50 @@ void menu(HWND hWnd) //setting up of the menu
     SetMenu(hWnd, hMenu);
 }
 
-void login(HWND hWnd)
+void login(HWND hWnd) //login page
 {
     CreateWindowW(L"Static", L"Enter Your Key:", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-50, 50, 100, 35, hWnd, NULL, NULL, NULL);
     hKey = CreateWindowW(L"Edit", L"", WS_VISIBLE | WS_CHILD | ES_AUTOHSCROLL | ES_PASSWORD, (WIDTH/2)-125, 250, 250, 20, hWnd, NULL, NULL, NULL);
     CreateWindowW(L"Button", L"Submit", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-38, 275, 76, 25, hWnd, (HMENU)SUBMIT_KEY, NULL, NULL);
 }
 
-void homePage(HWND hWnd)
+void homePage(HWND hWnd) //the home page
 {
     CreateWindowW(L"Static", L"Welcome to the home page!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-150, 25, 300, 19, hWnd, NULL, NULL, NULL);
 }
 
-void send(HWND hWnd)
+void send(HWND hWnd) //the sending of post points page
 {
     CreateWindowW(L"Static", L"Send Post Points!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
 }
 
-void recieve(HWND hWnd)
+void recieve(HWND hWnd) //the recieving addreass for post points
 {
     CreateWindowW(L"Static", L"Recieve Post Points at the Address Below!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-250, 25, 500, 19, hWnd, NULL, NULL, NULL);
-    CreateWindowW(L"Static", key, WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-250, 200, 500, 19, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Edit", string2wchar("PPADD256"+key), WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-300, 200, 600, 19, hWnd, NULL, NULL, NULL);
 }
 
-void view(HWND hWnd)
+void view(HWND hWnd) //the page to view posts
 {
     CreateWindowW(L"Static", L"View Posts Here!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
 }
 
-void create(HWND hWnd)
+void create(HWND hWnd) // the page to create posts
 {
     CreateWindowW(L"Static", L"Create Posts Here!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
 }
 
-void viewBal(HWND hWnd)
+void viewBal(HWND hWnd) // the page to view current balance and privious transactions
 {
     CreateWindowW(L"Static", L"Your Current Balance and Past transactions", WS_VISIBLE | WS_CHILD | SS_CENTER, 250, 25, 400, 19, hWnd, NULL, NULL, NULL);
 }
 
-void settings(HWND hWnd)
+void settings(HWND hWnd) // the settings page
 {
     CreateWindowW(L"Static", L"Settings", WS_VISIBLE | WS_CHILD | SS_CENTER, 400, 25, 100, 19, hWnd, NULL, NULL, NULL);
 }
 
-//------------------Useful functions for clearing windows etc------------------
+//------------------Useful function for clearing windows etc------------------<<
 
 BOOL CALLBACK DestoryChildCallback(HWND hwnd, LPARAM lParam)
 {
@@ -270,5 +280,32 @@ BOOL CALLBACK DestoryChildCallback(HWND hwnd, LPARAM lParam)
     }
 
     return TRUE;
+}
+
+//----------------------------------------------Cryptographic hashing / string manipualtion functions---------------------<<
+
+std::string wchar2string(wchar_t* str) // converting wchar_t to a string
+{
+    std::string mystring;
+    while(*str)
+    {
+        mystring += (char)*str++;
+    }
+    return  mystring;
+}
+
+std::wstring string2wstring(std::string str)
+{
+    std::wstring wstr;
+    for(int i = 0; i < str.length(); ++i)
+        wstr += wchar_t( str[i] );
+    return wstr;
+}
+
+const wchar_t* string2wchar(std::string str) // converting a string to a wchar_t
+{
+    std::wstring wstr = string2wstring(str);
+    const wchar_t* wchar = wstr.c_str();
+    return wchar;
 }
 
