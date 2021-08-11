@@ -22,12 +22,10 @@
 
 /*
 TODO:
--P2P connection network
--Block creating --> binding both posts and transactions
--Time stamp server
--Code formating features for posts
--mining system --> creating a tool for mining
--creating a tool for viewing posts
+-create an asymetric encyption scheme with the entered key
+-link the tcp functionalities
+-create a function to browse the post data inside of the block chain
+-figure out what to put in settings
 */
 
 #include <windows.h>
@@ -234,38 +232,38 @@ void login(HWND hWnd) //login page
     CreateWindowW(L"Button", L"Submit", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-38, 275, 76, 25, hWnd, (HMENU)SUBMIT_KEY, NULL, NULL);
 }
 
-void homePage(HWND hWnd) //the home page
+void homePage(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Home page>>>
 {
     CreateWindowW(L"Static", L"Welcome to the home page!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-150, 25, 300, 19, hWnd, NULL, NULL, NULL);
 }
 
-void send(HWND hWnd) //the sending of post points page
+void send(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Make transaction page>>>
 {
     CreateWindowW(L"Static", L"Send Post Points!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
 }
 
-void recieve(HWND hWnd) //the recieving addreass for post points
+void recieve(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Address information page>>>
 {
     CreateWindowW(L"Static", L"Recieve Post Points at the Address Below!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-250, 25, 500, 19, hWnd, NULL, NULL, NULL);
     CreateWindowW(L"Edit", string2wchar("PPADD256"+key), WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-300, 200, 600, 19, hWnd, NULL, NULL, NULL);
 }
 
-void view(HWND hWnd) //the page to view posts
+void view(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Post viewing page>>>
 {
     CreateWindowW(L"Static", L"View Posts Here!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
 }
 
-void create(HWND hWnd) // the page to create posts
+void create(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Post creation page>>>
 {
     CreateWindowW(L"Static", L"Create Posts Here!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-100, 25, 200, 19, hWnd, NULL, NULL, NULL);
 }
 
-void viewBal(HWND hWnd) // the page to view current balance and privious transactions
+void viewBal(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~View balance and transactions page>>>
 {
     CreateWindowW(L"Static", L"Your Current Balance and Past transactions", WS_VISIBLE | WS_CHILD | SS_CENTER, 250, 25, 400, 19, hWnd, NULL, NULL, NULL);
 }
 
-void settings(HWND hWnd) // the settings page
+void settings(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Settings page>>>
 {
     CreateWindowW(L"Static", L"Settings", WS_VISIBLE | WS_CHILD | SS_CENTER, 400, 25, 100, 19, hWnd, NULL, NULL, NULL);
 }

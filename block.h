@@ -45,8 +45,8 @@ public:
     void CreateHeader(std::string pH, int tS, int n, std::string mTH)
     {
         previousHash = pH;
-        timeStamp = tS
-                    nonce = n;
+        timeStamp = tS;
+        nonce = n;
         merkleTreeHash = mTH;
     }
 
