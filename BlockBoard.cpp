@@ -30,6 +30,7 @@ TODO:
 
 #include <windows.h>
 #include "picosha2.h"
+#include "p2p.h"
 #include <string>
 
 #define HOME 1
@@ -235,6 +236,7 @@ void login(HWND hWnd) //login page
 void homePage(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Home page>>>
 {
     CreateWindowW(L"Static", L"Welcome to the home page!", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-150, 25, 300, 19, hWnd, NULL, NULL, NULL);
+    CreateWindowW(L"Button", L"Start P2P", WS_VISIBLE | WS_CHILD | SS_CENTER, (WIDTH/2)-38, 275, 76, 25, hWnd, (HMENU)START_P2P, NULL, NULL);
 }
 
 void send(HWND hWnd) //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Make transaction page>>>

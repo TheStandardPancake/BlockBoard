@@ -36,7 +36,7 @@
 #include <WS2tcpip.h>
 #include <string>
 #include <vector>
-#include <pystring.h>
+#include "pystring.h"
 #include "fileRead.h"
 
 using namespace std;
@@ -152,14 +152,13 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
         return;
     }
 
-    // Do-while loop to send and receive data
     char buf[4096];
 
     //Querying the Server
 
     //Send an ID_CHECK
     string query = "ID_CHECK";
-    send(clientSocket, query.c_str(), ID.size() + 1, 0);
+    send(sock, query.c_str(), query.size() + 1, 0);
     //Wait for response
     ZeroMemory(buf, 4096);
     int bytesReceived = recv(sock, buf, 4096, 0);
@@ -171,10 +170,10 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
     }
 
     //Exchange IP lists
-    if (serverShare)
+    if (shareServers)
     {
         string query = "SERVER_SHARE";
-        send(clientSocket, query.c_str(), ID.size() + 1, 0);
+        send(sock, query.c_str(), query.size() + 1, 0);
         //Wait for response
         ZeroMemory(buf, 4096);
         int bytesReceived = recv(sock, buf, 4096, 0);
@@ -188,13 +187,13 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
             {
                 sendingString = sendingSring+*ip+","
             }
-            send(clientSocket, sendingString.c_str(), ID.size() + 1, 0);
+            send(sock, sendingString.c_str(), ID.size() + 1, 0);
         }
     }
 
     //Exchange the Block Chain
     string query = "CHAIN_EXCH";
-    send(clientSocket, query.c_str(), ID.size() + 1, 0);
+    send(sock, query.c_str(), query.size() + 1, 0);
     //Wait for response
     ZeroMemory(buf, 4096);
     int bytesReceived = recv(sock, buf, 4096, 0);
@@ -341,7 +340,7 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 {
                     sendingString = sendingSring+*ip+","
                 }
-                send(clientSocket, sendingString.c_str(), ID.size() + 1, 0);
+                send(clientSocket, sendingString.c_str(), sendingString.size() + 1, 0);
             }
             else
             {
