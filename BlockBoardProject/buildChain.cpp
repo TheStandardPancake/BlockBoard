@@ -18,12 +18,11 @@
 */
 
 #include "block.h"
-#include <sha256.h>
+//#include <sha256.h>
 #include <iostream>
-using namespace std
+using namespace std;
 
-    int main()
-{
+int main() {
 for (int i = 0, i <=10, i++)
 {
     cout>>i

@@ -1,0 +1,47 @@
+# depslib dependency file v1.0
+1658127477 source:c:\users\herob\documents\github\blockboard\blockboardproject\client.cpp
+	"fileRead.h"
+	<string>
+	<iostream>
+
+1658128444 c:\users\herob\documents\github\blockboard\blockboardproject\fileread.h
+	<iostream>
+	<fstream>
+	<string>
+	<vector>
+
+1658130991 source:c:\users\herob\documents\github\blockboard\blockboardproject\block.h
+	"picosha2.h"
+	<string>
+
+1658127477 c:\users\herob\documents\github\blockboard\blockboardproject\picosha2.h
+	<algorithm>
+	<cassert>
+	<iterator>
+	<sstream>
+	<vector>
+	<fstream>
+
+1658128444 source:c:\users\herob\documents\github\blockboard\blockboardproject\fileread.h
+	<iostream>
+	<fstream>
+	<string>
+	<vector>
+
+1658131709 source:c:\users\herob\documents\github\blockboard\blockboardproject\blockboard.cpp
+	<windows.h>
+	"picosha2.h"
+	<string>
+
+1658127477 source:c:\users\herob\documents\github\blockboard\blockboardproject\picosha2.h
+	<algorithm>
+	<cassert>
+	<iterator>
+	<sstream>
+	<vector>
+	<fstream>
+
+1658127477 source:c:\users\herob\documents\github\blockboard\blockboardproject\pystring.h
+	<string>
+	<vector>
+

@@ -30,9 +30,10 @@ TODO:
 
 #include <windows.h>
 #include "picosha2.h"
-#include "p2p.h"
+//#include "p2p.h"  // Temporarily not included as there are some bugs to fix so as to allow compile !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include <string>
 
+// The following are all translating integer assignments into meaningful and readable commands for use in checking what the current state of the window is and what buttons/actions have taken place
 #define HOME 1
 #define SEND_PP 2
 #define RECIEVE_PP 3
@@ -41,6 +42,7 @@ TODO:
 #define VIEW_BAL_TRANS 6
 #define SETTINGS 7
 #define SUBMIT_KEY 8
+#define START_P2P 9
 
 int windowState = 0;
 int WIDTH = 900;

@@ -52,21 +52,20 @@ public:
 
     //_____________________________The Body_____________________________
 
-    std::string postData;
+    std::string postData; // A string to store the post data
+
     int transactionData[11][4]; //each transaction will be an array with {address from, amount transfered, address to, hashed transaction data by address from}
 
     void addPost(std::string input)
     {
-        postData = input;
+        postData = input; // Store the input into the local post data variable
     }
 
 
     void addTransactions(int transactionList[11][4])
     {
-        for (int i; i = 0; i++)
-        {
-            transactionData[i] = transactionList[i];
-        }
+        int arraySize = 11 * 4;
+        std::copy(transactionList, transactionList + arraySize, transactionData); // store the input transactions into the local transactions variable
     }
 
     //--------------------------------------------------------------Hashing~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
@@ -84,7 +83,9 @@ public:
 
         for (int i = 1; i < 12; i++)
         {
-            initialHashes[i] = picosha2::hash256_hex_string(std::to_string(transactions[i][0])+std::to_string(transactions[i][1])+std::to_string(transactions[i][2])+std::to_string(transactions[i][3]));
+            int inidvidualTransaction[4]; //create a variable to temporarily store each individual transaction
+            std::copy(transactions[i], transactions[i] + 4, inidvidualTransaction);
+            initialHashes[i] = picosha2::hash256_hex_string(std::to_string(inidvidualTransaction[0])+std::to_string(inidvidualTransaction[1])+std::to_string(inidvidualTransaction[2])+std::to_string(inidvidualTransaction[3]));
         }
 
         //pair up into pairs of 2, doesn't matter if a post goes with a transaction

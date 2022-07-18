@@ -74,9 +74,9 @@ void writeIP(string IP)
 }
 
 //--------------------------------------------------------------Check if an ip is in the list of knwon ips~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
-boolean inIPList(string IP)
+bool inIPList(string IP)
 {
-    boolean inFile = false;
+    bool inFile = false;
     vector<string> IPArray;
     string line;
     ifstream IPAddressList ("NetworkAddressList.txt");

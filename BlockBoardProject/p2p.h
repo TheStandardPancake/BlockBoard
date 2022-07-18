@@ -185,9 +185,9 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
             string sendingString = "";
             for (vector<string>::iterator ip = ipSends.begin(); ip != ipSends.end(); ip++)
             {
-                sendingString = sendingSring+*ip+","
+                sendingString = sendingString+*ip+","
             }
-            send(sock, sendingString.c_str(), ID.size() + 1, 0);
+            send(sock, sendingString.c_str(), sendingString.size() + 1, 0);
         }
     }
 
