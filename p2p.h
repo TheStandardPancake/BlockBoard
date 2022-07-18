@@ -163,7 +163,7 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
     ZeroMemory(buf, 4096);
     int bytesReceived = recv(sock, buf, 4096, 0);
     string recievedString = string(buf, 0, bytesReceived);
-    if (recievedString == "NODE" OR recievedString == "MINER")
+    if ((recievedString == "NODE") OR (recievedString == "MINER"))
     {
         //write IP to the list of known IPs
         fileRead::writeIP(targetIP);
