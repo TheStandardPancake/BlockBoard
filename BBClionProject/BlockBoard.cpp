@@ -30,8 +30,9 @@ TODO:
 
 #include <windows.h>
 #include "picosha2.h"
-//#include "p2p.h"  // Temporarily not included as there are some bugs to fix so as to allow compile !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "p2p.h"  // Temporarily not included as there are some bugs to fix so as to allow compile !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #include <string>
+#include <thread>
 
 // The following are all translating integer assignments into meaningful and readable commands for use in checking what the current state of the window is and what buttons/actions have taken place
 #define HOME 1
@@ -107,6 +108,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
     return 0;
 }
 
+// Whilst this may look redundant, it is neccessary for the use of multithreading, as the thread function requires the input argument to be a function
+// Also it allows the implementation of other code to be run simultaneously to the server if need be in the same thread.
+void serverStart() {
+    p2p::Server("NODE", FALSE, FALSE);
+}
+
 LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
 {
     switch(msg)
@@ -135,7 +142,12 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         case SETTINGS:
             windowState = SETTINGS;
             break;
-        case SUBMIT_KEY:
+        case START_P2P: {
+            std::thread serverThread(serverStart);
+            serverThread.detach();
+            break;
+        }
+        case SUBMIT_KEY: {
             GetWindowTextW(hKey, lKey, 100); // collect the raw key submitted and save in the variable named "lKey"
             std::string sKey = wchar2string(lKey);
             key = picosha2::hash256_hex_string(sKey); // convert the key to a SHA256 hash
@@ -143,6 +155,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
             menu(hWnd); // setup the menu
             UpdateWindow(hWnd);
             break;
+        }
         }
         break;
     case WM_CREATE: //this is when the window is first created --------------------------------------<<
@@ -194,7 +207,7 @@ LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)
         PostQuitMessage(0);
         break;
     default:
-        return DefWindowProcW(hWnd, msg, wp, lp); //handles any messages that are not utalised with the switch
+        return DefWindowProcW(hWnd, msg, wp, lp); //handles any messages that are not utilised with the switch
     }
 }
 

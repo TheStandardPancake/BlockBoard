@@ -27,9 +27,9 @@
 *                   The IP must be given in the form "X.X.X.X" as a string where each X is one or more digits.
 *
 * Server( ID(string), SERVER_SHARE(boolean), COLLECTING(boolean) ) --> This will setup a server running on the local computer
-*                   that accepts incomming connections on port <targetPORT>. ID can be either "MINER" or "NODE",
-*                   SERVER_SHARE is wether or not the server is willing to share its other known nodes/miners,
-*                   COLLECTING is wether or not the server is both mining, and accepting transactions to form blocks.
+*                   that accepts incoming connections on port <targetPORT>. ID can be either "MINER" or "NODE",
+*                   SERVER_SHARE is whether or not the server is willing to share its other known nodes/miners,
+*                   COLLECTING is whether or not the server is both mining, and accepting transactions to form blocks.
 */
 
 #include <iostream>
@@ -46,7 +46,7 @@ using namespace std;
 
 namespace p2p
 {
-int targetPORT = 8334; //this will be the port that the network communicaes on
+int targetPORT = 8334; //this will be the port that the network communicates on
 
 //--------------------------------------------------------------search for other nodes on the p2p network~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
 
@@ -60,7 +60,7 @@ void searchNodes()
 
 //--------------------------------------------------------------create a connection to a tcp server~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
 
-//$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Anoying re-implementation of a library that isn't working (inet_pton isn't working from <WS2tcpip.h>) $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+//$$$$$$$$$$$$$$$$$$$$$$$$$$$$ Annoying re-implementation of a library that isn't working (inet_pton isn't working from <WS2tcpip.h>) $$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #define NS_INADDRSZ  4
 #define NS_IN6ADDRSZ 16
 #define NS_INT16SZ   2
@@ -172,37 +172,33 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
     //Exchange IP lists
     if (shareServers)
     {
-        string query = "SERVER_SHARE";
+        query = "SERVER_SHARE";
         send(sock, query.c_str(), query.size() + 1, 0);
         //Wait for response
         ZeroMemory(buf, 4096);
         int bytesReceived = recv(sock, buf, 4096, 0);
-        string recievedString = string(buf, 0, bytesReceived);
+        recievedString = string(buf, 0, bytesReceived);
         if (recievedString == "YES")
         {
             //send over the ip's
-            vector<string> ipSends = fileRead::nodeIPs;
+            vector<string> ipSends = fileRead::nodeIPs();
             string sendingString = "";
             for (vector<string>::iterator ip = ipSends.begin(); ip != ipSends.end(); ip++)
             {
-                sendingString = sendingString+*ip+","
+                sendingString = sendingString+*ip+",";
             }
             send(sock, sendingString.c_str(), sendingString.size() + 1, 0);
         }
     }
 
     //Exchange the Block Chain
-    string query = "CHAIN_EXCH";
+    query = "CHAIN_EXCH";
     send(sock, query.c_str(), query.size() + 1, 0);
     //Wait for response
     ZeroMemory(buf, 4096);
-    int bytesReceived = recv(sock, buf, 4096, 0);
-    string recievedString = string(buf, 0, bytesReceived);
-    //Send the current block chain (if there is one)
-    if (blockChain)
-    {
-        continue;
-    }
+    bytesReceived = recv(sock, buf, 4096, 0);
+    recievedString = string(buf, 0, bytesReceived);
+    //Send the current block chain (if there is one) --------- TODO: Finish this functionality
 
     // Gracefully close down everything
     closesocket(sock);
@@ -320,25 +316,25 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 }
 
                 //split the recieved string into a list
-                string recievedString = string(buf, 0, bytesReceived);
+                recievedString = string(buf, 0, bytesReceived);
                 vector <string> recievedIPList;
-                pystring::split(recievedString, recievedIPList, ",");
+                //pystring::split(recievedString, recievedIPList, ",");   /!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Unresolved error (undefined reference to split(etc.))
 
                 //for each recieved IP check if it is in the list already and if not add it
                 for(vector<string>::iterator ip = recievedIPList.begin(); ip != recievedIPList.end(); ip++)
                 {
-                    if (!fileRead::inIPList(ip))
+                    if (!fileRead::inIPList(*ip))
                     {
-                        fileRead::writeIP(ip);
+                        fileRead::writeIP(*ip);
                     }
                 }
 
                 //Send a series of ip addresses
-                vector<string> ipSends = fileRead::nodeIPs;
+                vector<string> ipSends = fileRead::nodeIPs();
                 string sendingString = "";
                 for (vector<string>::iterator ip = ipSends.begin(); ip != ipSends.end(); ip++)
                 {
-                    sendingString = sendingSring+*ip+","
+                    sendingString = sendingString+*ip+",";
                 }
                 send(clientSocket, sendingString.c_str(), sendingString.size() + 1, 0);
             }

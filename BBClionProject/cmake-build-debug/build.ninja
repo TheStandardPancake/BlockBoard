@@ -51,7 +51,7 @@ build cmake_object_order_depends_target_BlockBoard: phony || CMakeFiles/BlockBoa
 
 build CMakeFiles/BlockBoard.dir/BlockBoard.cpp.obj: CXX_COMPILER__BlockBoard_Debug C$:/Users/herob/Documents/GitHub/BlockBoard/BBClionProject/BlockBoard.cpp || cmake_object_order_depends_target_BlockBoard
   DEP_FILE = CMakeFiles\BlockBoard.dir\BlockBoard.cpp.obj.d
-  FLAGS = -g -std=gnu++14
+  FLAGS = -std=c++11 -pthread -g -std=gnu++14
   OBJECT_DIR = CMakeFiles\BlockBoard.dir
   OBJECT_FILE_DIR = CMakeFiles\BlockBoard.dir
 
@@ -64,8 +64,8 @@ build CMakeFiles/BlockBoard.dir/BlockBoard.cpp.obj: CXX_COMPILER__BlockBoard_Deb
 # Link the executable BlockBoard.exe
 
 build BlockBoard.exe: CXX_EXECUTABLE_LINKER__BlockBoard_Debug CMakeFiles/BlockBoard.dir/BlockBoard.cpp.obj
-  FLAGS = -g
-  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  FLAGS = -std=c++11 -pthread -g
+  LINK_LIBRARIES = -lws2_32  -lwsock32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\BlockBoard.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
