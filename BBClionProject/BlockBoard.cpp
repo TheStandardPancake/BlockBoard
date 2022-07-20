@@ -21,16 +21,16 @@
 
 
 /*
-TODO:
+TODO For the Entirety of the project:
 -create an asymetric encyption scheme with the entered key
--link the tcp functionalities
+-create a separate window for using the tcp functionality - The functionality has been linked and threading explored
 -create a function to browse the post data inside of the block chain
 -figure out what to put in settings
 */
 
 #include <windows.h>
 #include "picosha2.h"
-#include "p2p.h"  // Temporarily not included as there are some bugs to fix so as to allow compile !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "p2p.h"
 #include <string>
 #include <thread>
 
@@ -111,7 +111,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
 // Whilst this may look redundant, it is neccessary for the use of multithreading, as the thread function requires the input argument to be a function
 // Also it allows the implementation of other code to be run simultaneously to the server if need be in the same thread.
 void serverStart() {
-    p2p::Server("NODE", FALSE, FALSE);
+    p2p::Server("NODE", FALSE, FALSE); //TODO: Switch this out for an actual popup window with controls for all p2p functionality
 }
 
 LRESULT CALLBACK WindowProcedure(HWND hWnd, UINT msg, WPARAM wp, LPARAM lp)

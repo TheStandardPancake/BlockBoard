@@ -115,6 +115,9 @@ int inet_pton4(const char *src, in_addr *dst)
 //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ End of ugly code grafting $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 
+
+//----------------------------------------------------------------------------------------Client connectivity functions~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
+
 void Client(string targetIP, boolean shareServers, boolean blockChain)
 {
     // Initialize WinSock
@@ -156,7 +159,7 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
 
     //Querying the Server
 
-    //Send an ID_CHECK
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Send an ID_CHECK
     string query = "ID_CHECK";
     send(sock, query.c_str(), query.size() + 1, 0);
     //Wait for response
@@ -169,7 +172,7 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
         fileRead::writeIP(targetIP);
     }
 
-    //Exchange IP lists
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Exchange IP lists TODO: Check IP exhange works
     if (shareServers)
     {
         query = "SERVER_SHARE";
@@ -191,21 +194,21 @@ void Client(string targetIP, boolean shareServers, boolean blockChain)
         }
     }
 
-    //Exchange the Block Chain
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Exchange the Block Chain
     query = "CHAIN_EXCH";
     send(sock, query.c_str(), query.size() + 1, 0);
     //Wait for response
     ZeroMemory(buf, 4096);
     bytesReceived = recv(sock, buf, 4096, 0);
     recievedString = string(buf, 0, bytesReceived);
-    //Send the current block chain (if there is one) --------- TODO: Finish this functionality
+    //Send the current block chain (if there is one) --------- TODO: Finish block chain client exhcange functionality
 
     // Gracefully close down everything
     closesocket(sock);
     WSACleanup();
 }
 
-//--------------------------------------------------------------host a tcp server~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
+//----------------------------------------------------------------------------------------host a tcp server~~~~~~~~~~~~~~~~~~~~~~~~~~~<<
 
 void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
 {
@@ -284,13 +287,13 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
 
         //Handle the various different requests
         string recievedString = string(buf, 0, bytesReceived);
-
+        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Handling ID_CHECK
         if (recievedString == "ID_CHECK")
         {
             //send back as to if this is a "MINER" or a "NODE"
             send(clientSocket, ID.c_str(), ID.size() + 1, 0);
         }
-        else if (recievedString == "SERVER_SHARE")
+        else if (recievedString == "SERVER_SHARE") //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Handling SERVER_SHARE
         {
             //send back as to if this server is willing to share its other known nodes -- sends either "YES" or "NO"
             string yes = "YES";
@@ -318,7 +321,7 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 //split the recieved string into a list
                 recievedString = string(buf, 0, bytesReceived);
                 vector <string> recievedIPList;
-                //pystring::split(recievedString, recievedIPList, ",");   /!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Unresolved error (undefined reference to split(etc.))
+                //pystring::split(recievedString, recievedIPList, ",");   //!!!!!!!!!!!!!!!!!!!!!!!!TODO: Unresolved error (undefined reference to split(etc.))
 
                 //for each recieved IP check if it is in the list already and if not add it
                 for(vector<string>::iterator ip = recievedIPList.begin(); ip != recievedIPList.end(); ip++)
@@ -343,13 +346,13 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 send(clientSocket, no.c_str(), no.size() + 1, 0); //send "NO"
             }
         }
-        else if (recievedString == "CHAIN_EXCH")
+        else if (recievedString == "CHAIN_EXCH") //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Handling CHAIN_EXCH TODO: All of the server side CHAIN_EXCH
         {
             //Send the block chain somehow
 
             //Recieve the block chain somehow
         }
-        else if (recievedString == "TRANSACTION")
+        else if (recievedString == "TRANSACTION") //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Handling TRANSACTION
         {
             //send back as to if this program is "COLLECTING" transactions or if it is "CLOSED"
             string yes = "COLLECTING";
@@ -363,7 +366,7 @@ void Server(string ID, boolean SERVER_SHARE, boolean COLLECTING)
                 send(clientSocket, no.c_str(), no.size() + 1, 0); //send "CLOSED"
             }
 
-            //if "COLLECTING" then recieve the transaction
+            //if "COLLECTING" then recieve the transaction TODO: Check if this is finished or if it still needs to be programmed
             ZeroMemory(buf, 4096);
             int bytesReceived = recv(clientSocket, buf, 4096, 0);
             if (bytesReceived == SOCKET_ERROR)
